@@ -1,9 +1,19 @@
 /* Basic */
 
-html {
-    max-width: 38rem;
+body {
+    max-width: 75rem;
     padding: 2rem;
     margin: auto;
     line-height: 1.5rem;
     font-family: sans-serif;
+}
+
+a:any-link {
+    color: inherit;
+    text-decoration: inherit;
+}
+
+a:any-link:hover {
+    opacity: 90%;
+    text-decoration: underline;
 }

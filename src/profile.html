@@ -45,14 +45,23 @@
         }
 
         function loadRecentTracks() {
+            const datefmt = new Intl.DateTimeFormat('en-GB', { dateStyle: 'short', timeStyle: 'short' });
             let tbody = '';
             for (let i = 0; i < 10; i++) {
                 const data = scrobbles[i];
                 tbody += `<tr>
-                    <td>${data.track}</td>
-                    <td>by ${data.artist}</td>
-                    <td>on ${data.album || '(none)'}</td>
-                    <td>at ${data.utc_time}</td>
+                    <td>
+                        <a href="#">${data.track}</a>
+                    </td>
+                    <td>
+                        <small>by</small> <a href="#">${data.artist}</a>
+                    </td>
+                    <td>
+                        ${data.album ? `<small>on</small> <a href="#">${data.album}</a>` : ''}
+                    </td>
+                    <td>
+                        <small><a href="#">${datefmt.format(new Date(data.utc_time))}</a> UTC</small>
+                    </td>
                 </tr>`;
             }
             document.querySelector('#recent-tracks').innerHTML = tbody;
