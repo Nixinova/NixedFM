@@ -1,0 +1,1 @@
+Download Last.fm history from https://mainstream.ghan.nl/export.html and place in the 'database' folder named 'scrobbles.csv' to be able to use this.

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Your Profile | NixedFM</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        window.scrobbles = [];
+
+        function parseCsvLine(line) {
+            let quoted = false;
+            const data = [];
+            let cur = '';
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                if (char === '"') {
+                    if (quoted) {
+                        data.push(cur);
+                        cur = '';
+                    }
+                    quoted = !quoted;
+                    continue;
+                }
+                if (quoted) {
+                    // add text to cur while quoted
+                    cur += char;
+                }
+            }
+            return data;
+        }
+
+        async function loadScrobbles() {
+            const scrobblesCSV = await fetch('../database/scrobbles.csv').then(data => data.text());
+            const [csvHeader, ...csvLines] = scrobblesCSV.split(/\r?\n/);
+            const csvHeaders = csvHeader.split(',');
+            csvLines.slice(1).map(line => {
+                const parts = parseCsvLine(line);
+                const data = {};
+                for (let i = 0; i < parts.length; i++) {
+                    const heading = csvHeaders[i];
+                    data[heading] = parts[i];
+                }
+                scrobbles.push(data);
+            });
+        }
+
+        function loadRecentTracks() {
+            let tbody = '';
+            for (let i = 0; i < 10; i++) {
+                const data = scrobbles[i];
+                tbody += `<tr>
+                    <td>${data.track}</td>
+                    <td>by ${data.artist}</td>
+                    <td>on ${data.album || '(none)'}</td>
+                    <td>at ${data.utc_time}</td>
+                </tr>`;
+            }
+            document.querySelector('#recent-tracks').innerHTML = tbody;
+        }
+
+        document.addEventListener('DOMContentLoaded', async function () {
+            await loadScrobbles();
+            loadRecentTracks();
+        });
+    </script>
+</head>
+
+<body>
+    <h1>NixedFM</h1>
+
+    <nav>
+        <a href="./">Home</a>
+    </nav>
+
+    <h2>Your Profile</h2>
+
+
+    <h3>Recent Tracks</h3>
+    <table id="recent-tracks">
+    </table>
+</body>
+
+</html>

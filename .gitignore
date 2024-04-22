@@ -1,2 +1,6 @@
 # Dependencies
 node_modules/
+
+# Temporary while under very early development
+database/
+
