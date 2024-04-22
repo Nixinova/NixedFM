@@ -8,12 +8,16 @@ body {
     font-family: sans-serif;
 }
 
-a:any-link {
+table a:any-link {
     color: inherit;
     text-decoration: inherit;
 }
 
-a:any-link:hover {
+table a:any-link:hover {
     opacity: 90%;
     text-decoration: underline;
+}
+
+table td {
+    padding: 2px 6px;
 }

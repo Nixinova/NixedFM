@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Track | NixedFM</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="load.js"></script>
+    <script>
+        function loadInfo() {
+            const url = new URLSearchParams(window.location.search);
+            const artist = url.get('artist');
+            const track = url.get('track');
+            const album = url.get('album');
+            const canonAlbum = createCanonical(artist, album);
+            if (track) {
+                const canonTrack = createCanonical(artist, track);
+                const dbInfo = window.database.tracks[canonTrack] ?? {};
+                document.querySelector('#trackname').innerText = artist + ' - ' + track;
+                document.querySelector('#content').innerText = dbInfo.wiki ?? 'No content';
+                document.querySelector('#times').innerText = window.timesScrobbled.tracks[canonTrack];
+            }
+            else if (album) {
+                const canonAlbum = createCanonical(artist, album);
+                const dbInfo = window.database.albums[canonAlbum] ?? {};
+                document.querySelector('#trackname').innerText = artist + ' / ' + album;
+                document.querySelector('#content').innerText = dbInfo.wiki ?? 'No content';
+                document.querySelector('#times').innerText = window.timesScrobbled.albums[canonAlbum];
+            }
+        }
+        window.funcs = [loadInfo];
+    </script>
+</head>
+
+<body>
+    <h1>NixedFM</h1>
+
+    <nav>
+        <a href="./">Home</a>
+        <a href="./profile">Your Profile</a>
+    </nav>
+
+    <h2 id="trackname"></h2>
+
+    <div>Scrobbles: <span id="times"></span></div>
+
+    <hr />
+
+    <div id="content"></div>
+</body>
+
+</html>

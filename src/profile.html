@@ -4,46 +4,8 @@
 <head>
     <title>Your Profile | NixedFM</title>
     <link rel="stylesheet" href="style.css">
+    <script src="load.js"></script>
     <script>
-        window.scrobbles = [];
-
-        function parseCsvLine(line) {
-            let quoted = false;
-            const data = [];
-            let cur = '';
-            for (let i = 0; i < line.length; i++) {
-                const char = line[i];
-                if (char === '"') {
-                    if (quoted) {
-                        data.push(cur);
-                        cur = '';
-                    }
-                    quoted = !quoted;
-                    continue;
-                }
-                if (quoted) {
-                    // add text to cur while quoted
-                    cur += char;
-                }
-            }
-            return data;
-        }
-
-        async function loadScrobbles() {
-            const scrobblesCSV = await fetch('../database/scrobbles.csv').then(data => data.text());
-            const [csvHeader, ...csvLines] = scrobblesCSV.split(/\r?\n/);
-            const csvHeaders = csvHeader.split(',');
-            csvLines.slice(1).map(line => {
-                const parts = parseCsvLine(line);
-                const data = {};
-                for (let i = 0; i < parts.length; i++) {
-                    const heading = csvHeaders[i];
-                    data[heading] = parts[i];
-                }
-                scrobbles.push(data);
-            });
-        }
-
         function loadRecentTracks() {
             const datefmt = new Intl.DateTimeFormat('en-GB', { dateStyle: 'short', timeStyle: 'short' });
             let tbody = '';
@@ -51,13 +13,13 @@
                 const data = scrobbles[i];
                 tbody += `<tr>
                     <td>
-                        <a href="#">${data.track}</a>
+                        <a href="info?artist=${data.artist}&track=${data.track}">${data.track}</a>
                     </td>
                     <td>
                         <small>by</small> <a href="#">${data.artist}</a>
                     </td>
                     <td>
-                        ${data.album ? `<small>on</small> <a href="#">${data.album}</a>` : ''}
+                        ${data.album ? `<small>on</small> <a href="info?artist=${data.artist}&album=${data.album}">${data.album}</a>` : ''}
                     </td>
                     <td>
                         <small><a href="#">${datefmt.format(new Date(data.utc_time))}</a> UTC</small>
@@ -67,10 +29,7 @@
             document.querySelector('#recent-tracks').innerHTML = tbody;
         }
 
-        document.addEventListener('DOMContentLoaded', async function () {
-            await loadScrobbles();
-            loadRecentTracks();
-        });
+        window.funcs = [loadRecentTracks];
     </script>
 </head>
 
